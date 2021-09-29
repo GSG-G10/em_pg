@@ -1,44 +1,28 @@
-import logo from './logo.svg';
 import './App.css';
 import { Pagination } from "antd";
-import "./styles.css";
 import "antd/dist/antd.css";
+import { useEffect, useState } from 'react';
 
 function App() {
 
-  const state  = {
-    data: [],
-    currentPage: 0,
-  };
+  const [page, setPage] = useState("");
+  const [data, setData] = useState([]);
+  const api = `https://api.unsplash.com/search/collections?page=${page}&limit=10&query=cat&client_id=kQ_rA8Dd9Tb-JZ80Nx6RyFBtaoIFyaP5kdLn5EmGkVM`
 
-  componentDidMount(){
-    fitch(`https://api.unsplash.com/search/collections?page=${this.state.currentPage}&limit=10&query=cat&client_id=kQ_rA8Dd9Tb-JZ80Nx6RyFBtaoIFyaP5kdLn5EmGkVM`)
-    .then(response => response.json())
-    .then(data => {
-      this.setState({data: data});
-    });
-  }
+  useEffect(()=>{
+    fetch(api)
+    .then(response=> response.json())
+    .then(result=> setData(result.results))
+  }, [api]);
 
-  handleChange = ()=> {
-    this.setState({
-      current: page
-    })
-  }
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        {data.map(item => {
+          return (<img class = "img-item" alt = "img" src = {item.preview_photos[0].urls.raw}/>)
+        })}
+
+        <Pagination current= {page} onChange= {setPage} total= {10} />
       </header>
     </div>
   );
